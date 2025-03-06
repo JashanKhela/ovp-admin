@@ -9,8 +9,7 @@ import { toast } from "sonner";
 import { TimesheetEntry } from "@/lib/interfaces";
 
 export default function RecordTime() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [user, setUser] = useState<{ username: string; first_name: string; last_name: string } | null>(null);
+  const [, setUser] = useState<{ username: string; first_name: string; last_name: string } | null>(null);
   const [entry, setEntry] = useState<TimesheetEntry>({
     username: "",
     first_name: "",
