@@ -24,15 +24,17 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="absolute top-4 left-4 lg:hidden z-50">
+      <header className="lg:hidden bg-[#ACD1AF] text-white p-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50 shadow-md">
         <button onClick={() => setIsOpen(!isOpen)} className="p-2">
           {isOpen ? <X size={36} /> : <Menu size={36} />}
         </button>
-      </div>
+        <h2 className="text-md font-bold">Okanagan Valley Produce Ltd.</h2>
+      </header>
+
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 bg-[#ACD1AF] text-white shadow-lg w-64 p-4 transition-transform z-40",
+          "fixed inset-y-0 left-0 bg-[#ACD1AF] text-white shadow-lg w-64 p-4 transition-transform z-40 py-24 md:py-4 ",
           isOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0 lg:relative lg:w-60"
         )}
