@@ -11,7 +11,7 @@ export default function Sidebar() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
-  const location = useLocation(); // 🟢 Get current route location
+  const location = useLocation();
 
   useEffect(() => {
     const user = getCurrentUser();

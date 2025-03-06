@@ -17,7 +17,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     setLoading(true);
-    const result = await login(username, password);
+    const result = await login(username.toLowerCase(), password);
     setLoading(false);
   
     if (result.error) {
