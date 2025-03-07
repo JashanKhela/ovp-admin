@@ -306,7 +306,7 @@ export default function Timesheets() {
 
       <Card className="max-w-[350px] md:max-w-full">
         <CardHeader>
-          <CardTitle>📋 Employee Timesheets</CardTitle>
+          <CardTitle>Employee Timesheets</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Filters */}

@@ -12,7 +12,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -25,8 +30,8 @@ import {
 import { Document } from "../lib/interfaces";
 import { predefinedTags } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+
 export default function Documents() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -55,14 +60,13 @@ export default function Documents() {
     .filter((doc) =>
       filteredTag && filteredTag !== "all" ? doc.tag === filteredTag : true
     );
-  // Handle file selection and upload
+
   const handleUpload = async () => {
     if (!selectedFile || !selectedTag) return;
 
     setUploading(true);
     setProgress(0);
 
-    // Upload the file with the selected tag
     const uploadedDoc = await uploadDocument(
       selectedFile,
       selectedTag,
@@ -71,15 +75,14 @@ export default function Documents() {
 
     if (uploadedDoc) {
       setDocuments((prev) => [...prev, uploadedDoc]);
-      setSelectedFile(null); // Reset file selection
-      setSelectedTag(null); // Reset tag selection
+      setSelectedFile(null);
+      setSelectedTag(null);
     }
 
     setUploading(false);
     setProgress(0);
   };
 
-  // 🟢 Handle File Deletion
   const handleDelete = async (filePath: string) => {
     setDeleting(filePath);
 
@@ -99,14 +102,13 @@ export default function Documents() {
         <p className="text-gray-600">Upload and manage your documents.</p>
       </div>
 
-      <Card className="w-full">
+      {/* Upload Document Card */}
+      <Card className="w-full mb-6">
         <CardHeader>
-          <CardTitle>📂 Uploaded Documents</CardTitle>
+          <CardTitle>➕ Upload A Document</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* File Upload Section */}
-          <div className="flex flex-col md:flex-row items-center gap-4 w-full mb-6">
-            <div className="flex flex-wrap gap-2"></div>
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full">
             <input
               type="file"
               id="file-upload"
@@ -132,7 +134,6 @@ export default function Documents() {
                 ))}
               </SelectContent>
             </Select>
-            
             <Button
               className="w-full md:w-auto"
               disabled={!selectedFile || !selectedTag || uploading}
@@ -140,18 +141,20 @@ export default function Documents() {
             >
               {uploading ? "Uploading..." : "Upload"}
             </Button>
-
-
-            {uploading && (
-              <Progress value={progress} max={100} className="w-full" />
-            )}
           </div>
+          {uploading && <Progress value={progress} max={100} className="mt-4" />}
+        </CardContent>
+      </Card>
 
-          {/* Document Table */}
+      {/* Documents List Card */}
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Uploaded Documents</CardTitle>
+        </CardHeader>
+        <CardContent>
           {documents.length > 0 ? (
-            <div className="container mx-auto p-4 max-w-[300px] md:max-w-full overflow-x-auto">
-              {/* Scrollable Table Wrapper */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 {/* Search Bar */}
                 <Input
                   type="text"
@@ -195,50 +198,29 @@ export default function Documents() {
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="overflow-x-auto w-full">
                 <Table className="w-full table-fixed">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[200px] truncate">
-                        File Name
-                      </TableHead>
-                      <TableHead className="w-[100px] truncate">Tags</TableHead>
-
-                      <TableHead className="w-[150px] truncate">
-                        Uploaded Date
-                      </TableHead>
-                      <TableHead className="w-[150px] truncate">
-                        Uploaded By
-                      </TableHead>
-                      <TableHead className="w-[100px] truncate">Size</TableHead>
-
-                      <TableHead className="w-[200px] truncate">
-                        Actions
-                      </TableHead>
+                      <TableHead className="w-[200px]">File Name</TableHead>
+                      <TableHead className="w-[100px]">Tag</TableHead>
+                      <TableHead className="w-[150px]">Uploaded Date</TableHead>
+                      <TableHead className="w-[150px]">Uploaded By</TableHead>
+                      <TableHead className="w-[100px]">Size</TableHead>
+                      <TableHead className="w-[200px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredDocuments.map((doc, index) => (
-                      <TableRow key={index} className="w-full">
-                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
-                          {doc.name}
-                        </TableCell>
-                        <TableCell>{doc.tag || "No Tag"}</TableCell>
-                        <TableCell className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                          {doc.uploadedAt}
-                        </TableCell>
-                        <TableCell className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                          {doc.uploadedBy}
-                        </TableCell>
-                        <TableCell className="max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
-                          {doc.size}
-                        </TableCell>
-                        <TableCell className="max-w-[200px] flex gap-2">
-                          <a
-                            href={doc.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                    {filteredDocuments.map((doc) => (
+                      <TableRow key={doc.path}>
+                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{doc.name}</TableCell>
+                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{doc.tag || "No Tag"}</TableCell>
+                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{doc.uploadedAt}</TableCell>
+                        <TableCell>{doc.uploadedBy}</TableCell>
+                        <TableCell>{doc.size}</TableCell>
+                        <TableCell className="flex gap-2">
+                          <a href={doc.url} target="_blank" rel="noopener noreferrer">
                             <Button size="sm" variant="outline">
                               View
                             </Button>
@@ -257,7 +239,7 @@ export default function Documents() {
                   </TableBody>
                 </Table>
               </div>
-            </div>
+            </>
           ) : (
             <p className="text-gray-500 text-center">No documents available.</p>
           )}

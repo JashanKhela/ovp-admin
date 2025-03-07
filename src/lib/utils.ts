@@ -42,6 +42,7 @@ export const formatTimeTo12Hour = (time: string) => {
 };
 
 export const predefinedTags = [
+  "ACC",
   "Bank Documents",
   "Employee Documents",
   "Crop Insurance",
@@ -92,3 +93,23 @@ export const usersToAdd = [
     last_name: "Socorro",
   },
 ];
+
+export const expense_categories = [
+  "Accounting",
+  "Benefits",
+  "Commissions",
+  "Employee Related Cost",
+  "Fuel",
+  "Insurance",
+  "Legal",
+  "Maintenance/Repair",
+  "Meals",
+  "Miscellaneous",
+  "Office Supplies",
+  "Payroll",
+  "Tools/Irrigation",
+  "Travel",
+  "Utilities",
+];
+
+export const payment_methods = ["Bank Transfer", "Cash", "Cheque", "Credit Card", "Debit Card"];

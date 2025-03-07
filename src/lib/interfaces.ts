@@ -35,3 +35,15 @@ export interface PendingTimeSheet {
   date_tracked: string;
   hours_worked: number;
 }
+
+export interface Expense {
+  id?: string;
+  description: string
+  category: string;
+  amount: number;
+  expense_date: string;     
+  payment_method: string;
+  uploaded_by: string;
+  receipt_url?: string | null | undefined | File;
+  notes:string;
+}

@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom"; // 🟢 Import `useLocation`
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Menu, X, LayoutDashboard, Archive, LogOutIcon, Timer } from "lucide-react";
+import { Menu, X, LayoutDashboard, Archive, LogOutIcon, Timer, CircleDollarSign } from "lucide-react";
 import Logo from "@/assets/logo.png";
 import { Button } from "./ui/button";
 import { getCurrentUser, logout } from "@/services/auth";
@@ -71,6 +71,16 @@ export default function Sidebar() {
                 <Timer /> Timesheets
               </Link>
               <Link
+                to="/dashboard/expenses"
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
+                  location.pathname === "/dashboard/expenses" ? "bg-gray-300" : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <CircleDollarSign /> Expenses
+              </Link>
+              <Link
                 to="/dashboard/documents"
                 className={cn(
                   "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
@@ -80,6 +90,7 @@ export default function Sidebar() {
               >
                 <Archive /> Documents
               </Link>
+              
             </>
           )}
           {userRole === "employee" && (

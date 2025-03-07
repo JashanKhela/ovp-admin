@@ -7,6 +7,8 @@ import Documents from "./pages/Documents";
 import Timesheets from "./pages/Timesheets"; 
 import RecordTime from "./pages/RecordTime";
 import TimeReports from "./pages/TimeReports";
+import Expenses from "./pages/Expenses";
+import ExpenseDetail from "./pages/ExpenseDetail";
 
 function App() {
   return (
@@ -24,13 +26,35 @@ function App() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="documents" element={<Documents />} />
-
+        <Route
+          path="documents"
+          element={
+            <AuthGuard allowedRoles={["admin"]}>
+              <Documents />
+            </AuthGuard>
+          }
+        />
         <Route
           path="timesheets"
           element={
             <AuthGuard allowedRoles={["admin"]}>
               <Timesheets />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="expenses"
+          element={
+            <AuthGuard allowedRoles={["admin"]}>
+              <Expenses />
+            </AuthGuard>
+          }
+        />
+                <Route
+          path="expenses/:id"
+          element={
+            <AuthGuard allowedRoles={["admin"]}>
+              <ExpenseDetail />
             </AuthGuard>
           }
         />
@@ -42,7 +66,7 @@ function App() {
             </AuthGuard>
           }
         />
-                <Route
+        <Route
           path="time-reports"
           element={
             <AuthGuard allowedRoles={["employee"]}>

@@ -98,3 +98,18 @@ export async function getPendingTimesheets() {
 
   return data;
 }
+
+export async function getRecentTimesheets() {
+  const { data, error } = await supabase
+    .from("timesheets")
+    .select("*")
+    .order("date_tracked", { ascending: false }) // Get the latest
+    .limit(5); // Limit to 5 most recent
+
+  if (error) {
+    console.error("❌ Error fetching recent timesheets:", error.message);
+    return [];
+  }
+
+  return data;
+}
