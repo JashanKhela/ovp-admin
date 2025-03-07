@@ -83,6 +83,7 @@ export default function Sidebar() {
             </>
           )}
           {userRole === "employee" && (
+            <>
             <Link
               to="/dashboard/record-time"
               className={cn(
@@ -93,6 +94,17 @@ export default function Sidebar() {
             >
               <Timer/> Registrar Horas
             </Link>
+              <Link
+              to="/dashboard/time-reports"
+              className={cn(
+                "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
+                location.pathname === "/dashboard/time-reports" ? "bg-gray-300" : ""
+              )}
+              onClick={() => setIsOpen(false)}
+            >
+             <Archive/> Mis Reportes de Tiempo
+            </Link>
+            </>
           )}
           <Button
             onClick={logout}
