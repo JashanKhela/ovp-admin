@@ -82,4 +82,19 @@ export async function deleteTimesheet(id: string) {
   
     return true;
   }
-  
+// 🟢 Get pending time sheets for homepage
+export async function getPendingTimesheets() {
+  const { data, error } = await supabase
+    .from("timesheets")
+    .select("*")
+    .eq("approval_status", "Pending")
+    .order("date_tracked", { ascending: false }) // Show latest first
+    .limit(5); // Fetch only 5
+
+  if (error) {
+    console.error("❌ Error fetching pending timesheets:", error.message);
+    return [];
+  }
+
+  return data;
+}
