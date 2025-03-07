@@ -27,6 +27,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 import { Document } from "../lib/interfaces";
 import { predefinedTags } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -41,6 +48,8 @@ export default function Documents() {
   const [selectedUploader, setSelectedUploader] = useState("");
   const [filteredTag, setFilteredTag] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // Number of items per page
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -60,6 +69,12 @@ export default function Documents() {
     .filter((doc) =>
       filteredTag && filteredTag !== "all" ? doc.tag === filteredTag : true
     );
+
+  const totalPages = Math.ceil(filteredDocuments.length / pageSize);
+  const paginatedDocuments = filteredDocuments.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleUpload = async () => {
     if (!selectedFile || !selectedTag) return;
@@ -103,7 +118,7 @@ export default function Documents() {
       </div>
 
       {/* Upload Document Card */}
-      <Card className="w-full mb-6">
+      <Card className="max-w-[350px] md:max-w-full mb-6">
         <CardHeader>
           <CardTitle>➕ Upload A Document</CardTitle>
         </CardHeader>
@@ -147,27 +162,22 @@ export default function Documents() {
       </Card>
 
       {/* Documents List Card */}
-      <Card className="w-full">
+      <Card className="max-w-[350px] md:max-w-full">
         <CardHeader>
           <CardTitle>Uploaded Documents</CardTitle>
         </CardHeader>
         <CardContent>
           {documents.length > 0 ? (
             <>
+              {/* Filters */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                {/* Search Bar */}
                 <Input
                   type="text"
                   placeholder="Search by name..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-
-                {/* Filter by Uploader */}
-                <Select
-                  value={selectedUploader}
-                  onValueChange={setSelectedUploader}
-                >
+                <Select value={selectedUploader} onValueChange={setSelectedUploader}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by Uploader" />
                   </SelectTrigger>
@@ -182,8 +192,6 @@ export default function Documents() {
                     )}
                   </SelectContent>
                 </Select>
-
-                {/* Filter by Tag */}
                 <Select value={filteredTag} onValueChange={setFilteredTag}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by Tag" />
@@ -199,31 +207,30 @@ export default function Documents() {
                 </Select>
               </div>
 
+              {/* Table */}
               <div className="overflow-x-auto w-full">
-                <Table className="w-full table-fixed">
+                <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[200px]">File Name</TableHead>
-                      <TableHead className="w-[100px]">Tag</TableHead>
-                      <TableHead className="w-[150px]">Uploaded Date</TableHead>
-                      <TableHead className="w-[150px]">Uploaded By</TableHead>
-                      <TableHead className="w-[100px]">Size</TableHead>
-                      <TableHead className="w-[200px]">Actions</TableHead>
+                      <TableHead>File Name</TableHead>
+                      <TableHead>Tag</TableHead>
+                      <TableHead>Uploaded Date</TableHead>
+                      <TableHead>Uploaded By</TableHead>
+                      <TableHead>Size</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredDocuments.map((doc) => (
+                    {paginatedDocuments.map((doc) => (
                       <TableRow key={doc.path}>
                         <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{doc.name}</TableCell>
                         <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{doc.tag || "No Tag"}</TableCell>
-                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{doc.uploadedAt}</TableCell>
+                        <TableCell>{doc.uploadedAt}</TableCell>
                         <TableCell>{doc.uploadedBy}</TableCell>
                         <TableCell>{doc.size}</TableCell>
                         <TableCell className="flex gap-2">
                           <a href={doc.url} target="_blank" rel="noopener noreferrer">
-                            <Button size="sm" variant="outline">
-                              View
-                            </Button>
+                            <Button size="sm" variant="outline">View</Button>
                           </a>
                           <Button
                             size="sm"
@@ -239,6 +246,19 @@ export default function Documents() {
                   </TableBody>
                 </Table>
               </div>
+
+              {/* Pagination Controls */}
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} />
+                  </PaginationItem>
+                  <PaginationItem>Page {currentPage} of {totalPages}</PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </>
           ) : (
             <p className="text-gray-500 text-center">No documents available.</p>

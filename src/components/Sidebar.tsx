@@ -41,7 +41,7 @@ export default function Sidebar() {
       >
         <div className="flex flex-col justify-center mb-4">
           <img src={Logo} alt="Okanagan Valley Produce" className="h-full w-full mx-auto" />
-          <h2 className="text-xl font-bold mb-4 text-left">
+          <h2 className="text-xl font-bold mb-4 text-center">
             {`Welcome Back`} <br />
             {firstName} {lastName}
           </h2>
