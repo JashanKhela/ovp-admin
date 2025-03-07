@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function formatDate(timestamp: string | null) {
@@ -24,6 +24,23 @@ export function formatDate(timestamp: string | null) {
   });
 }
 
+export const getPSTDate = () => {
+  const now = new Date();
+  const pstOffset = now.getTimezoneOffset() + 480; // Convert UTC to PST (-8 hours)
+  now.setMinutes(now.getMinutes() - pstOffset);
+  return now.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+};
+
+export const formatTimeTo12Hour = (time: string) => {
+  if (!time) return ""; // Handle empty values
+
+  const [hours, minutes] = time.split(":").map(Number);
+  const suffix = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12 || 12; // Convert 0 -> 12 for midnight case
+
+  return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${suffix}`;
+};
+
 export const predefinedTags = [
   "Bank Documents",
   "Employee Documents",
@@ -39,9 +56,39 @@ export const predefinedTags = [
 ];
 
 export const usersToAdd = [
-  { username: "sarbjeetkhela", password: "10231970", role: "admin", first_name: "Sarbjeet", last_name: "Khela" },
-  { username: "avneetkhela", password: "10231991", role: "admin", first_name: "Avneet", last_name: "Khela" },
-  { username: "nikkikhela", password: "04211999", role: "admin", first_name: "Nikki", last_name: "Khela" },
-  { username: "manueldominguez", password: "03261968", role: "employee", first_name: "Manuel", last_name: "Dominguez" },
-  { username: "eduardosocorro", password: "12011996", role: "employee", first_name: "Eduardo", last_name: "Socorro" },
+  {
+    username: "sarbjeetkhela",
+    password: "10231970",
+    role: "admin",
+    first_name: "Sarbjeet",
+    last_name: "Khela",
+  },
+  {
+    username: "avneetkhela",
+    password: "10231991",
+    role: "admin",
+    first_name: "Avneet",
+    last_name: "Khela",
+  },
+  {
+    username: "nikkikhela",
+    password: "04211999",
+    role: "admin",
+    first_name: "Nikki",
+    last_name: "Khela",
+  },
+  {
+    username: "manueldominguez",
+    password: "03261968",
+    role: "employee",
+    first_name: "Manuel",
+    last_name: "Dominguez",
+  },
+  {
+    username: "eduardosocorro",
+    password: "12011996",
+    role: "employee",
+    first_name: "Eduardo",
+    last_name: "Socorro",
+  },
 ];

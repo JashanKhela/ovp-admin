@@ -10,16 +10,16 @@ export interface Document {
 
 export interface TimesheetEntry {
   id?: string;
-  username: string;
   first_name: string;
   last_name: string;
+  username: string;
   date_tracked: string;
+  start_time: string;  // 🟢 New field
+  end_time: string;    // 🟢 New field
   hours_worked: number;
   location: string;
   approval_status?: "Pending" | "Approved" | "Rejected";
-  approved?: boolean;
   approved_by?: string | null;
-  created_at?: string;
 }
 
 export interface Employee {

@@ -4,21 +4,44 @@ import { addTimesheet } from "@/services/timesheets";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { TimesheetEntry } from "@/lib/interfaces";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { getPSTDate } from "@/lib/utils";
 
 export default function RecordTime() {
-  const [, setUser] = useState<{ username: string; first_name: string; last_name: string } | null>(null);
+  const [, setUser] = useState<{
+    username: string;
+    first_name: string;
+    last_name: string;
+  } | null>(null);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+
+
+  
   const [entry, setEntry] = useState<TimesheetEntry>({
     username: "",
     first_name: "",
     last_name: "",
-    date_tracked: new Date().toISOString().split("T")[0], // Default to today
+    date_tracked: getPSTDate(),
+    start_time: "",
+    end_time: "",
     hours_worked: 0,
     location: "",
   });
-  
 
   // Fetch Logged-in Employee Data
   useEffect(() => {
@@ -28,33 +51,69 @@ export default function RecordTime() {
       setUser(loggedUser);
       setEntry((prev) => ({
         ...prev,
-        username: loggedUser.username || "", 
-        first_name: loggedUser.first_name || "", 
-        last_name: loggedUser.last_name || "", 
+        username: loggedUser.username || "",
+        first_name: loggedUser.first_name || "",
+        last_name: loggedUser.last_name || "",
       }));
     }
   }, []);
-  
 
   // Handle Input Changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setEntry({ ...entry, [e.target.name]: e.target.value });
   };
 
   // Handle Time Submission
   const handleSubmit = async () => {
-    if (!entry.date_tracked || !entry.hours_worked || !entry.location) {
+    if (
+      !entry.date_tracked ||
+      !entry.start_time ||
+      !entry.end_time ||
+      !entry.location
+    ) {
       toast.error("Por favor, complete todos los campos.");
       return;
     }
 
+    // Convert start_time and end_time to Date objects
+    const startTime = new Date(`${entry.date_tracked}T${entry.start_time}`);
+    const endTime = new Date(`${entry.date_tracked}T${entry.end_time}`);
+
+    // Ensure end time is after start time
+    if (endTime <= startTime) {
+      toast.error("La hora de fin debe ser posterior a la hora de inicio.");
+      return;
+    }
+
+    // Calculate hours worked
+    const hoursWorked =
+      (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    setEntry((prev) => ({
+      ...prev,
+      hours_worked: parseFloat(hoursWorked.toFixed(2)),
+    }));
+
+    // Open Confirmation Modal
+    setConfirmModalOpen(true);
+  };
+
+  const handleConfirmSubmit = async () => {
     const success = await addTimesheet(entry);
     if (success) {
       toast.success("Horas registradas exitosamente.");
-      setEntry({ ...entry, hours_worked: 0, location: "" });
+      setEntry({
+        ...entry,
+        start_time: "",
+        end_time: "",
+        hours_worked: 0,
+        location: "",
+      });
     } else {
       toast.error("Error al registrar las horas.");
     }
+    setConfirmModalOpen(false);
   };
 
   return (
@@ -82,27 +141,56 @@ export default function RecordTime() {
               type="date"
               name="date_tracked"
               value={entry.date_tracked || ""}
-              onChange={handleInputChange} // ✅ Allow user to select date
+              onChange={handleInputChange}
             />
 
             {/* Employee Input Fields */}
-            <Input
-              type="number"
-              name="hours_worked"
-              placeholder="Horas trabajadas"
-              value={entry.hours_worked ?? ""} // ✅ Use "" if undefined
-              onChange={handleInputChange}
-            />
+            <div className="flex flex-col">
+              <label
+                htmlFor="start_time"
+                className="text-sm font-medium text-gray-700"
+              >
+                Hora de inicio
+              </label>
+              <Input
+                type="time"
+                id="start_time"
+                name="start_time"
+                value={entry.start_time}
+                onChange={(e) =>
+                  setEntry({ ...entry, start_time: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                htmlFor="end_time"
+                className="text-sm font-medium text-gray-700"
+              >
+                Hora de fin
+              </label>
+              <Input
+                type="time"
+                id="end_time"
+                name="end_time"
+                value={entry.end_time}
+                onChange={(e) =>
+                  setEntry({ ...entry, end_time: e.target.value })
+                }
+              />
+            </div>
+
             <Select
               name="location"
               value={entry.location || ""}
               onValueChange={(value) => setEntry({ ...entry, location: value })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Ubicación de trabajo" />
               </SelectTrigger>
               <SelectContent>
-              <SelectItem value="Road 2">Road 2</SelectItem>
+                <SelectItem value="Road 2">Road 2</SelectItem>
                 <SelectItem value="Road 3">Road 3</SelectItem>
                 <SelectItem value="Road 16">Road 16</SelectItem>
                 <SelectItem value="Spiers Rd">Spiers Rd</SelectItem>
@@ -112,6 +200,26 @@ export default function RecordTime() {
           </div>
         </CardContent>
       </Card>
+      <Dialog open={confirmModalOpen} onOpenChange={setConfirmModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmación</DialogTitle>
+          </DialogHeader>
+          <p>
+            Vas a registrar <strong>{entry.hours_worked} horas</strong> para el
+            día <strong>{entry.date_tracked}</strong>.
+          </p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setConfirmModalOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handleConfirmSubmit}>Confirmar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

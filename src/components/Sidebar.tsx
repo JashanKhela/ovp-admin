@@ -91,7 +91,7 @@ export default function Sidebar() {
               )}
               onClick={() => setIsOpen(false)}
             >
-              🕒 Registrar Horas
+              <Timer/> Registrar Horas
             </Link>
           )}
           <Button
