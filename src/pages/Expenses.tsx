@@ -95,12 +95,12 @@ export default function Expenses() {
       toast.error("Please fill in all required fields.");
       return;
     }
-
+  
     setLoading(true);
     setUploadProgress(0);
     const user = getCurrentUser();
     let receiptUrl = null;
-
+  
     // Upload receipt with progress tracking
     if (expense.receipt_url) {
       receiptUrl = await uploadReceipt(
@@ -108,7 +108,7 @@ export default function Expenses() {
         setUploadProgress
       );
     }
-
+  
     const success = await addExpense({
       category: expense.category,
       amount: parseFloat(expense.amount.toString()),
@@ -119,11 +119,13 @@ export default function Expenses() {
       receipt_url: receiptUrl || null,
       notes: expense.notes,
     });
-
+  
     setLoading(false);
     if (success) {
       setUploadProgress(0);
       toast.success("Expense added successfully!");
+  
+      // Reset form fields
       setExpense({
         category: "",
         amount: 0,
@@ -134,12 +136,14 @@ export default function Expenses() {
         uploaded_by: "",
         notes: "",
       });
-      getExpenses();
+  
+      const updatedExpenses = await getExpenses();
+      setExpenses(updatedExpenses);
     } else {
       toast.error("Error adding expense.");
     }
   };
-
+  
   return (
     <div className="container mx-auto p-4">
       <div className="mb-6">
