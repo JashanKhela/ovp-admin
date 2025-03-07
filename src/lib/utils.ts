@@ -96,13 +96,12 @@ export const usersToAdd = [
 
 export const expense_categories = [
   "Accounting",
-  "Benefits",
-  "Commissions",
   "Employee Related Cost",
   "Fuel",
   "Insurance",
   "Legal",
   "Maintenance/Repair",
+  "Memberships",
   "Meals",
   "Miscellaneous",
   "Office Supplies",
