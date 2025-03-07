@@ -8,7 +8,7 @@ export default function DashboardLayout() {
       <Sidebar />
 
       {/* Main Content - Outlet will render nested pages */}
-      <main className="flex-1 px-6  py-24 lg:py-12">
+      <main className="flex-1 px-6  py-36 lg:py-12">
         <Outlet />
       </main>
     </div>

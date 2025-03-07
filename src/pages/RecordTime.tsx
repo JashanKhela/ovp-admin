@@ -118,7 +118,14 @@ export default function RecordTime() {
 
   return (
     <div className="container mx-auto p-4">
-      <Card className="max-w-md mx-auto">
+      <div className="mb-6">
+  <h1 className="text-3xl font-bold"> Registro de Horas de Trabajo</h1>
+  <p className="text-gray-600">
+    Ingrese su hora de inicio y fin de turno. Su tiempo trabajado será calculado automáticamente. Asegúrese de seleccionar la fecha y ubicación correcta antes de enviar.
+  </p>
+</div>
+
+      <Card className="mx-auto">
         <CardHeader>
           <CardTitle>🕒 Registrar Horas de Trabajo</CardTitle>
         </CardHeader>

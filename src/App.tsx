@@ -6,6 +6,7 @@ import AuthGuard from "./components/AuthGaurd";
 import Documents from "./pages/Documents";
 import Timesheets from "./pages/Timesheets"; 
 import RecordTime from "./pages/RecordTime";
+import TimeReports from "./pages/TimeReports";
 
 function App() {
   return (
@@ -28,22 +29,28 @@ function App() {
         <Route
           path="timesheets"
           element={
-            <AuthGuard allowedRoles={["admin"]}> 
+            <AuthGuard allowedRoles={["admin"]}>
               <Timesheets />
             </AuthGuard>
           }
         />
-              <Route
-  path="record-time" // ✅ Changed from absolute to relative path
-  element={
-    <AuthGuard allowedRoles={["employee"]}> 
-      <RecordTime />
-    </AuthGuard>
-  }
-/>
+        <Route
+          path="record-time"
+          element={
+            <AuthGuard allowedRoles={["employee"]}>
+              <RecordTime />
+            </AuthGuard>
+          }
+        />
+                <Route
+          path="time-reports"
+          element={
+            <AuthGuard allowedRoles={["employee"]}>
+              <TimeReports />
+            </AuthGuard>
+          }
+        />
       </Route>
-
-
     </Routes>
   );
 }
