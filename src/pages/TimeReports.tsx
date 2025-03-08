@@ -128,7 +128,6 @@ export default function TimeReports() {
                   <TableHead>Hora de Inicio</TableHead>
                   <TableHead>Hora de Fin</TableHead>
                   <TableHead>Horas Trabajadas</TableHead>
-                  <TableHead>Ubicación</TableHead>
                   <TableHead>Estado</TableHead>
                 </TableRow>
               </TableHeader>
@@ -144,7 +143,6 @@ export default function TimeReports() {
                         {formatTimeTo12Hour(entry.end_time)}
                       </TableCell>
                       <TableCell>{entry.hours_worked}</TableCell>
-                      <TableCell>{entry.location}</TableCell>
                       <TableCell className="flex items-center gap-2">
                         <span
                           className={`px-3 py-1 rounded-md text-sm font-semibold ${

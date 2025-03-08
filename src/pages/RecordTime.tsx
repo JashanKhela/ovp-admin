@@ -4,13 +4,6 @@ import { addTimesheet } from "@/services/timesheets";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "sonner";
 import { TimesheetEntry } from "@/lib/interfaces";
 import {
@@ -70,9 +63,7 @@ export default function RecordTime() {
     if (
       !entry.date_tracked ||
       !entry.start_time ||
-      !entry.end_time ||
-      !entry.location
-    ) {
+      !entry.end_time    ) {
       toast.error("Por favor, complete todos los campos.");
       return;
     }
@@ -144,12 +135,24 @@ export default function RecordTime() {
               disabled
               placeholder="Apellido"
             />
-            <Input
+
+
+                        {/* Employee Input Fields */}
+                        <div className="flex flex-col">
+              <label
+                htmlFor="start_time"
+                className="text-sm font-medium text-gray-700"
+              >
+                Hora de inicio
+              </label>
+              <Input
+              id="date_tracked"
               type="date"
               name="date_tracked"
               value={entry.date_tracked || ""}
               onChange={handleInputChange}
             />
+            </div>
 
             {/* Employee Input Fields */}
             <div className="flex flex-col">
@@ -188,21 +191,6 @@ export default function RecordTime() {
               />
             </div>
 
-            <Select
-              name="location"
-              value={entry.location || ""}
-              onValueChange={(value) => setEntry({ ...entry, location: value })}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Ubicación de trabajo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Road 2">Road 2</SelectItem>
-                <SelectItem value="Road 3">Road 3</SelectItem>
-                <SelectItem value="Road 16">Road 16</SelectItem>
-                <SelectItem value="Spiers Rd">Spiers Rd</SelectItem>
-              </SelectContent>
-            </Select>
             <Button onClick={handleSubmit}>Registrar Horas</Button>
           </div>
         </CardContent>
