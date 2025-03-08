@@ -42,13 +42,15 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { formatTimeTo12Hour } from "@/lib/utils";
+import fileDownload from "js-file-download";
 
 export default function Timesheets() {
   const [timesheets, setTimesheets] = useState<TimesheetEntry[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [dateRange, setDateRange] = useState({ start: "", end: "" });
+
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [newEntry, setNewEntry] = useState<TimesheetEntry>({
     first_name: "",
@@ -71,9 +73,19 @@ export default function Timesheets() {
     .filter((entry) =>
       selectedLocation === "all" ? true : entry.location === selectedLocation
     )
-    .filter((entry) =>
-      selectedDate ? entry.date_tracked === selectedDate : true
-    );
+    .filter((entry) => {
+      const entryDate = new Date(entry.date_tracked);
+      const startDate = dateRange.start ? new Date(dateRange.start) : null;
+      const endDate = dateRange.end ? new Date(dateRange.end) : null;
+
+      return (
+        (!startDate || entryDate >= startDate) &&
+        (!endDate || entryDate <= endDate)
+      );
+    });
+
+
+
 
   // 🟢 Apply Pagination AFTER Filtering
   const totalPages = Math.ceil(filteredEntries.length / pageSize);
@@ -94,7 +106,7 @@ export default function Timesheets() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedLocation, selectedDate]);
+  }, [searchTerm, selectedLocation, dateRange]);
 
   //  Handle Adding a New Timesheet Entry
   const handleAddTimesheet = async () => {
@@ -183,6 +195,51 @@ export default function Timesheets() {
     toast.success("Timesheet entry deleted successfully!");
     setDeleteId(null);
   };
+
+  // Export Timesheets to CSV
+
+  const handleExportCSV = () => {
+    if (filteredEntries.length === 0) {
+      toast.error("No timesheets available in the selected range.");
+      return;
+    }
+  
+    // CSV Headers for Detailed Entries
+    const headers = [
+      "First Name,Last Name,Date,Start Time,End Time,Hours Worked,Location,Approved By,Status",
+    ];
+  
+    // Generate CSV Data for Detailed Entries
+    const detailedCsvData = filteredEntries.map(entry =>
+      `${entry.first_name},${entry.last_name},${entry.date_tracked},${entry.start_time},${entry.end_time},${entry.hours_worked},${entry.location},${entry.approved_by || "N/A"},${entry.approval_status}`
+    );
+  
+    // Generate Summary Data (Total Hours per Employee)
+    const summaryMap = new Map();
+    filteredEntries.forEach(entry => {
+      const key = `${entry.first_name} ${entry.last_name}`;
+      summaryMap.set(key, (summaryMap.get(key) || 0) + entry.hours_worked);
+    });
+  
+    // Headers for Summary Report
+    const summaryHeaders = ["Employee Name,Total Hours"];
+    const summaryCsvData = Array.from(summaryMap.entries()).map(
+      ([employee, totalHours]) => `${employee},${totalHours.toFixed(2)}`
+    );
+  
+    // Combine and Export CSV
+    const csvContent = [
+      "Detailed Timesheet Entries:\n",
+      ...headers,
+      ...detailedCsvData,
+      "\nSummary Report:\n",
+      ...summaryHeaders,
+      ...summaryCsvData,
+    ].join("\n");
+  
+    fileDownload(csvContent, "timesheets_report.csv");
+  };
+  
   return (
     <div className="container mx-auto p-4">
       {/* Page Header */}
@@ -311,34 +368,91 @@ export default function Timesheets() {
         <CardContent>
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <Input
-              type="text"
-              placeholder="Search by employee name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <div className="flex flex-col">
+              <label
+                className="text-sm font-medium text-gray-700"
+                htmlFor="search"
+              >
+                Search Employee
+              </label>
+              <Input
+                id="search"
+                type="text"
+                placeholder="Enter name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
 
-            <Select
-              value={selectedLocation}
-              onValueChange={setSelectedLocation}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by Location" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                <SelectItem value="Road 2">Road 2</SelectItem>
-                <SelectItem value="Road 3">Road 3</SelectItem>
-                <SelectItem value="Road 16">Road 16</SelectItem>
-                <SelectItem value="Spiers Rd">Spiers Rd</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-col">
+              <label
+                className="text-sm font-medium text-gray-700"
+                htmlFor="location"
+              >
+                Filter by Location
+              </label>
+              <Select
+                value={selectedLocation}
+                onValueChange={setSelectedLocation}
+              >
+                <SelectTrigger id="location">
+                  <SelectValue placeholder="Select Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Locations</SelectItem>
+                  <SelectItem value="Road 2">Road 2</SelectItem>
+                  <SelectItem value="Road 3">Road 3</SelectItem>
+                  <SelectItem value="Road 16">Road 16</SelectItem>
+                  <SelectItem value="Spiers Rd">Spiers Rd</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-            <Input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
+            <div className="grid grid-cols-3 gap-4">
+              <div className="flex flex-col">
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="start_date"
+                >
+                  Start Date
+                </label>
+                <Input
+                  id="start_date"
+                  type="date"
+                  value={dateRange.start}
+                  onChange={(e) =>
+                    setDateRange({ ...dateRange, start: e.target.value })
+                  }
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="end_date"
+                >
+                  End Date
+                </label>
+                <Input
+                  id="end_date"
+                  type="date"
+                  value={dateRange.end}
+                  onChange={(e) =>
+                    setDateRange({ ...dateRange, end: e.target.value })
+                  }
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="export_button"
+                >
+                  Export For Payroll
+                </label>
+                <Button onClick={handleExportCSV} className="mb-4">
+                  📥 Export CSV
+                </Button>
+              </div>
+            </div>
           </div>
 
           {/* Timesheet Table */}

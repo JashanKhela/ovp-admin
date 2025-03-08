@@ -35,7 +35,7 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination";
 import { Document } from "../lib/interfaces";
-import { predefinedTags } from "@/lib/utils";
+import { DocumentPageSize, predefinedTags } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
 export default function Documents() {
@@ -49,7 +49,7 @@ export default function Documents() {
   const [filteredTag, setFilteredTag] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5; // Number of items per page
+  const pageSize = DocumentPageSize; // Number of items per page
 
   useEffect(() => {
     const fetchDocuments = async () => {

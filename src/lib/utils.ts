@@ -112,3 +112,10 @@ export const expense_categories = [
 ];
 
 export const payment_methods = ["Bank Transfer", "Cash", "Cheque", "Credit Card", "Debit Card"];
+
+export const DocumentPageSize = 10;
+export const TimesheetPageSize = 10;
+export const ExpensePageSize = 10;
+export const PendingTimesheetPageSize = 5;
+
+
