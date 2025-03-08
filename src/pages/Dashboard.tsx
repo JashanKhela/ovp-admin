@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { getPendingTimesheets } from "@/services/timesheets";
 import { getRecentExpenses } from "@/services/expenses";
 import { getRecentTimesheets } from "@/services/timesheets";
-
-import { Timer, BadgeDollarSign, CircleDashed } from "lucide-react";
+import { getRecentHarvestReports } from "@/services/harvestReports"; // Import the function
+import { Timer, BadgeDollarSign, CircleDashed, Cherry } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -22,10 +22,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PendingTimeSheet } from "@/lib/interfaces";
+import { HarvestReport, PendingTimeSheet } from "@/lib/interfaces";
 import { Expense } from "@/lib/interfaces";
+import { getCurrentUser } from "@/services/auth";
 
 export default function Dashboard() {
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
   const [pendingTimesheets, setPendingTimesheets] = useState<
     PendingTimeSheet[]
   >([]);
@@ -34,7 +37,19 @@ export default function Dashboard() {
     []
   );
 
+  const [recentHarvestReports, setRecentHarvestReports] = useState<
+    HarvestReport[]
+  >([]);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (user) {
+      setFirstName(user.first_name);
+      setLastName(user.last_name);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchPendingTimesheets = async () => {
@@ -63,10 +78,21 @@ export default function Dashboard() {
     fetchRecentTimesheets();
   }, []);
 
+  useEffect(() => {
+    const fetchRecentHarvestReports = async () => {
+      const reports = await getRecentHarvestReports();
+      setRecentHarvestReports(reports);
+    };
+
+    fetchRecentHarvestReports();
+  }, []);
+
   return (
     <>
       <div className="mb-6 text-center">
-        <h1 className="text-3xl font-bold">Welcome, Admin!</h1>
+        <h1 className="text-3xl font-bold">
+          Welcome, {firstName} {lastName}!
+        </h1>
       </div>
 
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -106,7 +132,7 @@ export default function Dashboard() {
             )}
           </CardContent>
           <CardFooter>
-            <Button onClick={() => navigate("/dashboard/timesheets")}>
+            <Button onClick={() => navigate("/dashboard/timesheets")} className="w-full">
               View All Time Sheets
             </Button>
           </CardFooter>
@@ -144,7 +170,7 @@ export default function Dashboard() {
                     </TableBody>
                   </Table>
                 </ScrollArea>
-                <Button onClick={() => navigate("/dashboard/timesheets")}>
+                <Button onClick={() => navigate("/dashboard/timesheets")} className="w-full">
                   Review All
                 </Button>
               </>
@@ -188,8 +214,53 @@ export default function Dashboard() {
             )}
           </CardContent>
           <CardFooter>
-            <Button onClick={() => navigate("/dashboard/expenses")}>
+            <Button onClick={() => navigate("/dashboard/expenses")} className="w-full">
               View All Expenses
+            </Button>
+          </CardFooter>
+        </Card>
+        {/* Recent Harvest Reports Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex flex-row items-center gap-2">
+              <Cherry/> Recent Harvest Reports
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {recentHarvestReports.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table className="min-w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Fruit</TableHead>
+                      <TableHead>Variety</TableHead>
+                      <TableHead>Bins</TableHead>
+                      <TableHead>Pounds</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recentHarvestReports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell>{report.fruit}</TableCell>
+                        <TableCell>{report.variety}</TableCell>
+                        <TableCell>{report.bins_harvested}</TableCell>
+                        <TableCell>{report.pounds_harvested}</TableCell>
+                        <TableCell>{report.harvest_location}</TableCell>
+                        <TableCell>{report.harvest_date}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <p className="text-gray-500">No recent harvest reports.</p>
+            )}
+          </CardContent>
+          <CardFooter>
+            <Button onClick={() => navigate("/dashboard/harvest-reports")} className="w-full">
+              View All Harvest Reports
             </Button>
           </CardFooter>
         </Card>

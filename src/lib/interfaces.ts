@@ -47,3 +47,17 @@ export interface Expense {
   receipt_url?: string | null | undefined | File;
   notes:string;
 }
+
+export interface HarvestReport {
+  id?: string;
+  fruit: string;
+  variety: string;
+  bins_harvested: number;
+  pounds_harvested: number;
+  harvest_location: string;
+  harvest_date: string;
+  notes?: string;
+  uploaded_by: string;
+  shipped_to?: string;
+  created_at?: string;
+}

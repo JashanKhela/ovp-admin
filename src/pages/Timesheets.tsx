@@ -41,7 +41,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { formatTimeTo12Hour } from "@/lib/utils";
+import { farmLocations, formatTimeTo12Hour } from "@/lib/utils";
 import fileDownload from "js-file-download";
 
 export default function Timesheets() {
@@ -348,10 +348,11 @@ export default function Timesheets() {
                   <SelectValue placeholder="Select Location" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Road 2">Road 2</SelectItem>
-                  <SelectItem value="Road 3">Road 3</SelectItem>
-                  <SelectItem value="Road 16">Road 16</SelectItem>
-                  <SelectItem value="Spiers Rd">Spiers Rd</SelectItem>
+                {farmLocations.map((farm) => (
+                    <SelectItem key={farm} value={farm}>
+                      {farm}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -367,7 +368,7 @@ export default function Timesheets() {
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="flex flex-col">
               <label
                 className="text-sm font-medium text-gray-700"
@@ -395,20 +396,21 @@ export default function Timesheets() {
                 value={selectedLocation}
                 onValueChange={setSelectedLocation}
               >
-                <SelectTrigger id="location">
+                <SelectTrigger className="w-full" id="location">
                   <SelectValue placeholder="Select Location" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Locations</SelectItem>
-                  <SelectItem value="Road 2">Road 2</SelectItem>
-                  <SelectItem value="Road 3">Road 3</SelectItem>
-                  <SelectItem value="Road 16">Road 16</SelectItem>
-                  <SelectItem value="Spiers Rd">Spiers Rd</SelectItem>
+                  {farmLocations.map((farm) => (
+                    <SelectItem key={farm} value={farm}>
+                      {farm}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col">
                 <label
                   className="text-sm font-medium text-gray-700"
@@ -441,18 +443,19 @@ export default function Timesheets() {
                   }
                 />
               </div>
-              <div className="flex flex-col">
+  
+            </div>
+            <div className="flex flex-col just">
                 <label
                   className="text-sm font-medium text-gray-700"
                   htmlFor="export_button"
                 >
                   Export For Payroll
                 </label>
-                <Button onClick={handleExportCSV} className="mb-4">
-                  📥 Export CSV
+                <Button onClick={handleExportCSV} className="mb-4 ">
+                  Export CSV
                 </Button>
               </div>
-            </div>
           </div>
 
           {/* Timesheet Table */}

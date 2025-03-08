@@ -119,3 +119,11 @@ export const ExpensePageSize = 10;
 export const PendingTimesheetPageSize = 5;
 
 
+export const farmLocations = ["Road 2", "Road 3", "Road 16", "Spiers Rd"];
+
+export const FRUITS = {
+  Apples: ["Gala", "Ambrosia", "Honeycrisp", "Sunrise", "Pink Lady"],
+  Cherries: ["Lapin", "Sweetheart", "Tieton", "Chelan", "Staccato", "Christlina", "Benton", "Rainier", "Van"],
+  Peaches: ["Redhaven"],
+  Plums: ["Japanese Plum"],
+};

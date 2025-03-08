@@ -9,6 +9,7 @@ import RecordTime from "./pages/RecordTime";
 import TimeReports from "./pages/TimeReports";
 import Expenses from "./pages/Expenses";
 import ExpenseDetail from "./pages/ExpenseDetail";
+import HarvestReports from "./pages/HarvestReports";
 
 function App() {
   return (
@@ -39,6 +40,14 @@ function App() {
           element={
             <AuthGuard allowedRoles={["admin"]}>
               <Timesheets />
+            </AuthGuard>
+          }
+        />
+                <Route
+          path="harvest_reports"
+          element={
+            <AuthGuard allowedRoles={["admin"]}>
+              <HarvestReports />
             </AuthGuard>
           }
         />

@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom"; // 🟢 Import `useLocation`
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Menu, X, LayoutDashboard, Archive, LogOutIcon, Timer, CircleDollarSign } from "lucide-react";
+import { Menu, X, LayoutDashboard, Archive, LogOutIcon, Timer, CircleDollarSign, Apple } from "lucide-react";
 import Logo from "@/assets/logo.png";
 import { Button } from "./ui/button";
 import { getCurrentUser, logout } from "@/services/auth";
@@ -9,16 +9,12 @@ import { getCurrentUser, logout } from "@/services/auth";
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [firstName, setFirstName] = useState<string | null>(null);
-  const [lastName, setLastName] = useState<string | null>(null);
   const location = useLocation();
 
   useEffect(() => {
     const user = getCurrentUser();
     if (user) {
       setUserRole(user.role);
-      setFirstName(user.first_name);
-      setLastName(user.last_name);
     }
   }, []);
 
@@ -34,17 +30,13 @@ export default function Sidebar() {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 bg-[#ACD1AF] text-white shadow-lg w-64 p-4 transition-transform z-40 py-24 md:py-4 ",
+          "fixed inset-y-0 left-0 bg-[#ACD1AF] text-white shadow-lg w-64 p-4 transition-transform z-40 py-24 md:py-0 ",
           isOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0 lg:relative lg:w-60"
         )}
       >
-        <div className="flex flex-col justify-center mb-4">
+        <div className="flex flex-col justify-center">
           <img src={Logo} alt="Okanagan Valley Produce" className="h-full w-full mx-auto" />
-          <h2 className="text-xl font-bold mb-4 text-center">
-            {`Welcome Back`} <br />
-            {firstName} {lastName}
-          </h2>
         </div>
 
         <nav className="space-y-2">
@@ -59,6 +51,16 @@ export default function Sidebar() {
                 onClick={() => setIsOpen(false)} 
               >
                 <LayoutDashboard /> Dashboard
+              </Link>
+              <Link
+                to="/dashboard/harvest_reports"
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
+                  location.pathname === "/dashboard/harvest_reports" ? "bg-gray-300" : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <Apple /> Harvest Reports
               </Link>
               <Link
                 to="/dashboard/timesheets"
