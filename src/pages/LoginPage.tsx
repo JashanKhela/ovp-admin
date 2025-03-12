@@ -37,11 +37,11 @@ export default function Login() {
       navigate("/dashboard"); // Default fallback
     }
   
-    toast(`Successfully logged in as ${username}`);
+    toast.success(`Successfully logged in as ${username}`);
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
+    <div className="flex h-screen items-center justify-center bg-[#a2dda7]">
       <Card className="w-96 shadow-lg">
         <CardHeader className="flex flex-col items-center">
           {/* Logo Placeholder */}

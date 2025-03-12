@@ -1,15 +1,17 @@
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/admin/Dashboard";
 import Login from "./pages/LoginPage";
 import AuthGuard from "./components/AuthGaurd";
-import Documents from "./pages/Documents";
-import Timesheets from "./pages/Timesheets"; 
-import RecordTime from "./pages/RecordTime";
-import TimeReports from "./pages/TimeReports";
-import Expenses from "./pages/Expenses";
-import ExpenseDetail from "./pages/ExpenseDetail";
-import HarvestReports from "./pages/HarvestReports";
+import Documents from "./pages/admin/Documents";
+import Timesheets from "./pages/admin/Timesheets";
+import RecordTime from "./pages/employees/RecordTime";
+import TimeReports from "./pages/employees/TimeReports";
+import Expenses from "./pages/admin/Expenses";
+import ExpenseDetail from "./pages/admin/ExpenseDetail";
+import HarvestReports from "./pages/admin/HarvestReports";
+import AdminUsers from "./pages/admin/Users";
+import Locations from "./pages/admin/Locations";
 
 function App() {
   return (
@@ -43,8 +45,8 @@ function App() {
             </AuthGuard>
           }
         />
-                <Route
-          path="harvest_reports"
+        <Route
+          path="harvest-reports"
           element={
             <AuthGuard allowedRoles={["admin"]}>
               <HarvestReports />
@@ -59,11 +61,27 @@ function App() {
             </AuthGuard>
           }
         />
-                <Route
+        <Route
           path="expenses/:id"
           element={
             <AuthGuard allowedRoles={["admin"]}>
               <ExpenseDetail />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="locations"
+          element={
+            <AuthGuard allowedRoles={["admin"]}>
+              <Locations />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="users"
+          element={
+            <AuthGuard allowedRoles={["admin"]}>
+              <AdminUsers />
             </AuthGuard>
           }
         />

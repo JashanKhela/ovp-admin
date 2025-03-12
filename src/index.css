@@ -122,3 +122,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Customize toast background colors */
+[data-sonner-toast][data-type="success"] {
+  background-color: #5bd365 !important; /* Green */
+  color: white !important;
+  border: none;
+  font:bold;
+  font-size: 1rem;
+}
+
+[data-sonner-toast][data-type="error"] {
+  background-color: #e05f5f !important; /* Red */
+  color: white !important;
+  border: none;
+
+}
+
+[data-sonner-toast][data-type="warning"] {
+  background-color: #e1b363 !important; /* Yellow */
+  color: white !important;
+  border: none;
+
+}
+
+[data-sonner-toast][data-type="info"] {
+  background-color: #5e90e0 !important; /* Blue */
+  color: white !important;
+  border: none;
+
+}

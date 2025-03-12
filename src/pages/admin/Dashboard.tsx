@@ -25,6 +25,7 @@ import {
 import { HarvestReport, PendingTimeSheet } from "@/lib/interfaces";
 import { Expense } from "@/lib/interfaces";
 import { getCurrentUser } from "@/services/auth";
+import { formatDate } from "@/lib/utils";
 
 export default function Dashboard() {
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -81,9 +82,10 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchRecentHarvestReports = async () => {
       const reports = await getRecentHarvestReports();
-      setRecentHarvestReports(reports);
+      if (reports.length > 0) {
+        setRecentHarvestReports([reports[0]]); // Only keep the latest harvest
+      }
     };
-
     fetchRecentHarvestReports();
   }, []);
 
@@ -132,7 +134,10 @@ export default function Dashboard() {
             )}
           </CardContent>
           <CardFooter>
-            <Button onClick={() => navigate("/dashboard/timesheets")} className="w-full">
+            <Button
+              onClick={() => navigate("/dashboard/timesheets")}
+              className="w-full"
+            >
               View All Time Sheets
             </Button>
           </CardFooter>
@@ -170,7 +175,10 @@ export default function Dashboard() {
                     </TableBody>
                   </Table>
                 </ScrollArea>
-                <Button onClick={() => navigate("/dashboard/timesheets")} className="w-full">
+                <Button
+                  onClick={() => navigate("/dashboard/timesheets")}
+                  className="w-full"
+                >
                   Review All
                 </Button>
               </>
@@ -214,52 +222,55 @@ export default function Dashboard() {
             )}
           </CardContent>
           <CardFooter>
-            <Button onClick={() => navigate("/dashboard/expenses")} className="w-full">
+            <Button
+              onClick={() => navigate("/dashboard/expenses")}
+              className="w-full"
+            >
               View All Expenses
             </Button>
           </CardFooter>
         </Card>
         {/* Recent Harvest Reports Card */}
+        {/* Recent Harvest Reports Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex flex-row items-center gap-2">
-              <Cherry/> Recent Harvest Reports
+              <Cherry /> Latest Harvest
             </CardTitle>
           </CardHeader>
           <CardContent>
             {recentHarvestReports.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table className="min-w-full">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Fruit</TableHead>
-                      <TableHead>Variety</TableHead>
-                      <TableHead>Bins</TableHead>
-                      <TableHead>Pounds</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recentHarvestReports.map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell>{report.fruit}</TableCell>
-                        <TableCell>{report.variety}</TableCell>
-                        <TableCell>{report.bins_harvested}</TableCell>
-                        <TableCell>{report.pounds_harvested}</TableCell>
-                        <TableCell>{report.harvest_location}</TableCell>
-                        <TableCell>{report.harvest_date}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <div className="space-y-2">
+                <h2 className="text-xl font-semibold">
+                  {recentHarvestReports[0].fruit} -{" "}
+                  {recentHarvestReports[0].variety}
+                </h2>
+                <p className="text-gray-700">
+                  <span className="font-medium">Bins Harvested:</span>{" "}
+                  {recentHarvestReports[0].bins_harvested}
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-medium">Total Pounds:</span>{" "}
+                  {recentHarvestReports[0].pounds_harvested} lbs
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-medium">Harvest Date:</span>{" "}
+                  {formatDate(recentHarvestReports[0].harvest_date)}
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-medium">Location:</span>{" "}
+                  {recentHarvestReports[0].harvest_location}
+                </p>
               </div>
             ) : (
               <p className="text-gray-500">No recent harvest reports.</p>
             )}
           </CardContent>
           <CardFooter>
-            <Button onClick={() => navigate("/dashboard/harvest-reports")} className="w-full">
+            <Button
+              onClick={() => navigate("/dashboard/harvest-reports")}
+              className="w-full"
+            >
               View All Harvest Reports
             </Button>
           </CardFooter>

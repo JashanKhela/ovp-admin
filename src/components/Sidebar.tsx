@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom"; // 🟢 Import `useLocation`
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Menu, X, LayoutDashboard, Archive, LogOutIcon, Timer, CircleDollarSign, Apple } from "lucide-react";
+import { Menu, X, LayoutDashboard, Archive, LogOutIcon, Timer, CircleDollarSign, Apple, User, Locate } from "lucide-react";
 import Logo from "@/assets/logo.png";
 import { Button } from "./ui/button";
 import { getCurrentUser, logout } from "@/services/auth";
@@ -20,17 +20,17 @@ export default function Sidebar() {
 
   return (
     <>
-      <header className="lg:hidden bg-[#ACD1AF] text-white p-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50 shadow-md">
+      <header className="lg:hidden bg-[#a2dda7] text-white p-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50 shadow-md">
         <button onClick={() => setIsOpen(!isOpen)} className="p-2">
           {isOpen ? <X size={36} /> : <Menu size={36} />}
         </button>
-        <h2 className="text-md font-bold">Okanagan Valley Produce Ltd.</h2>
+        <h2 className="text-md font-bold px-4">Okanagan Valley Produce Ltd.</h2>
       </header>
 
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 bg-[#ACD1AF] text-white shadow-lg w-64 p-4 transition-transform z-40 py-24 md:py-0 ",
+          "fixed inset-y-0 left-0 bg-[#a2dda7] text-white shadow-lg w-64 p-4 transition-transform z-40 py-24 md:py-0 ",
           isOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0 lg:relative lg:w-60"
         )}
@@ -53,7 +53,7 @@ export default function Sidebar() {
                 <LayoutDashboard /> Dashboard
               </Link>
               <Link
-                to="/dashboard/harvest_reports"
+                to="/dashboard/harvest-reports"
                 className={cn(
                   "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
                   location.pathname === "/dashboard/harvest_reports" ? "bg-gray-300" : ""
@@ -92,7 +92,26 @@ export default function Sidebar() {
               >
                 <Archive /> Documents
               </Link>
-              
+              <Link
+                to="/dashboard/locations"
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
+                  location.pathname === "/dashboard/locations" ? "bg-gray-300" : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <Locate /> Manage Farms
+              </Link>
+              <Link
+                to="/dashboard/users"
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
+                  location.pathname === "/dashboard/users" ? "bg-gray-300" : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <User /> Manage Users
+              </Link>
             </>
           )}
           {userRole === "employee" && (
@@ -105,7 +124,7 @@ export default function Sidebar() {
               )}
               onClick={() => setIsOpen(false)}
             >
-              <Timer/> Registrar Horas
+              <Timer/>Registrar Horas
             </Link>
               <Link
               to="/dashboard/time-reports"
@@ -115,7 +134,7 @@ export default function Sidebar() {
               )}
               onClick={() => setIsOpen(false)}
             >
-             <Archive/> Mis Reportes de Tiempo
+             <Archive/>Reportes de Tiempo
             </Link>
             </>
           )}

@@ -12,12 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -34,7 +29,7 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
-import { Document } from "../lib/interfaces";
+import { Document } from "../../lib/interfaces";
 import { DocumentPageSize, predefinedTags } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
@@ -157,7 +152,9 @@ export default function Documents() {
               {uploading ? "Uploading..." : "Upload"}
             </Button>
           </div>
-          {uploading && <Progress value={progress} max={100} className="mt-4" />}
+          {uploading && (
+            <Progress value={progress} max={100} className="mt-4" />
+          )}
         </CardContent>
       </Card>
 
@@ -177,7 +174,10 @@ export default function Documents() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Select value={selectedUploader} onValueChange={setSelectedUploader}>
+                <Select
+                  value={selectedUploader}
+                  onValueChange={setSelectedUploader}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by Uploader" />
                   </SelectTrigger>
@@ -223,14 +223,24 @@ export default function Documents() {
                   <TableBody>
                     {paginatedDocuments.map((doc) => (
                       <TableRow key={doc.path}>
-                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{doc.name}</TableCell>
-                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{doc.tag || "No Tag"}</TableCell>
+                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                          {doc.name}
+                        </TableCell>
+                        <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                          {doc.tag || "No Tag"}
+                        </TableCell>
                         <TableCell>{doc.uploadedAt}</TableCell>
                         <TableCell>{doc.uploadedBy}</TableCell>
                         <TableCell>{doc.size}</TableCell>
                         <TableCell className="flex gap-2">
-                          <a href={doc.url} target="_blank" rel="noopener noreferrer">
-                            <Button size="sm" variant="outline">View</Button>
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Button size="sm" variant="outline">
+                              View
+                            </Button>
                           </a>
                           <Button
                             size="sm"
@@ -251,11 +261,21 @@ export default function Documents() {
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} />
+                    <PaginationPrevious
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                    />
                   </PaginationItem>
-                  <PaginationItem>Page {currentPage} of {totalPages}</PaginationItem>
                   <PaginationItem>
-                    <PaginationNext onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} />
+                    Page {currentPage} of {totalPages}
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                    />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>

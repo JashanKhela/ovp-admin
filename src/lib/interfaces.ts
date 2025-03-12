@@ -61,3 +61,31 @@ export interface HarvestReport {
   shipped_to?: string;
   created_at?: string;
 }
+
+export interface User {
+  id: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  role: "admin" | "employee";
+  last_login?: string; // Nullable, since a user may have never logged in
+}
+
+export interface SiteLocation  {
+  id: string;
+  location_name: string;
+  location_description?: string;
+  location_lat?: number;
+  location_long?: number;
+  year_purchased?: number;
+  location_size?: string;
+}
+export interface UpdateLocation {
+  id?: string;
+  location_name?: string;
+  location_description?: string;
+  location_lat?: number;
+  location_long?: number;
+  year_purchased?: number;
+  location_size?: string;
+}

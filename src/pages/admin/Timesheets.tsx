@@ -5,6 +5,7 @@ import {
   updateTimesheetStatus,
   deleteTimesheet,
 } from "@/services/timesheets";
+import { getLocations } from "@/services/locations";
 import {
   Table,
   TableBody,
@@ -23,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Employee, TimesheetEntry } from "@/lib/interfaces";
+import { Employee, SiteLocation, TimesheetEntry } from "@/lib/interfaces";
 import { getEmployees } from "@/services/employees";
 import {
   Dialog,
@@ -41,7 +42,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { farmLocations, formatTimeTo12Hour } from "@/lib/utils";
+import { formatTimeTo12Hour } from "@/lib/utils";
 import fileDownload from "js-file-download";
 
 export default function Timesheets() {
@@ -50,6 +51,7 @@ export default function Timesheets() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  const [locations, setLocations] = useState<SiteLocation[]>([]);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [newEntry, setNewEntry] = useState<TimesheetEntry>({
@@ -100,14 +102,17 @@ export default function Timesheets() {
       const employeesData = await getEmployees();
       setEmployees(employeesData);
       setTimesheets(await getTimesheets());
+      setLocations(await getLocations()); // Fetch locations from service
     };
     fetchData();
   }, []);
+  
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedLocation, dateRange]);
 
+  
   //  Handle Adding a New Timesheet Entry
   const handleAddTimesheet = async () => {
     if (
@@ -348,9 +353,9 @@ export default function Timesheets() {
                   <SelectValue placeholder="Select Location" />
                 </SelectTrigger>
                 <SelectContent>
-                {farmLocations.map((farm) => (
-                    <SelectItem key={farm} value={farm}>
-                      {farm}
+                {locations.map((farm) => (
+                    <SelectItem key={farm.id} value={farm.location_name}>
+                      {farm.location_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -401,9 +406,9 @@ export default function Timesheets() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Locations</SelectItem>
-                  {farmLocations.map((farm) => (
-                    <SelectItem key={farm} value={farm}>
-                      {farm}
+                  {locations.map((farm) => (
+                    <SelectItem key={farm.location_name} value={farm.location_name}>
+                      {farm.location_name}
                     </SelectItem>
                   ))}
                 </SelectContent>

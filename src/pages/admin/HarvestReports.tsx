@@ -24,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { HarvestReport } from "@/lib/interfaces";
+import { HarvestReport, SiteLocation } from "@/lib/interfaces";
 import {
   Select,
   SelectContent,
@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { farmLocations, FRUITS } from "@/lib/utils";
+import { FRUITS } from "@/lib/utils";
 import {
   Pagination,
   PaginationContent,
@@ -40,6 +40,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { getLocations } from "@/services/locations";
 
 export default function HarvestReports() {
   const [reports, setReports] = useState<HarvestReport[]>([]);
@@ -58,7 +59,7 @@ export default function HarvestReports() {
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [selectedFruit, setSelectedFruit] = useState("all");
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
-
+  const [locations, setLocations] = useState<SiteLocation[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -90,6 +91,7 @@ export default function HarvestReports() {
   useEffect(() => {
     const fetchData = async () => {
       setReports(await getHarvestReports());
+      setLocations(await getLocations());
     };
     fetchData();
   }, []);
@@ -262,9 +264,9 @@ export default function HarvestReports() {
                   <SelectValue placeholder="Select Location" />
                 </SelectTrigger>
                 <SelectContent>
-                  {farmLocations.map((farm) => (
-                    <SelectItem key={farm} value={farm}>
-                      {farm}
+                  {locations.map((loc) => (
+                    <SelectItem key={loc.id} value={loc.location_name}>
+                      {loc.location_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -350,9 +352,9 @@ export default function HarvestReports() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Locations</SelectItem>
-                    {farmLocations.map((farm) => (
-                      <SelectItem key={farm} value={farm}>
-                        {farm}
+                    {locations.map((loc) => (
+                      <SelectItem key={loc.id} value={loc.location_name}>
+                        {loc.location_name}
                       </SelectItem>
                     ))}
                   </SelectContent>
