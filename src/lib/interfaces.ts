@@ -89,3 +89,22 @@ export interface UpdateLocation {
   year_purchased?: number;
   location_size?: string;
 }
+
+export interface Task {
+  id?: string;
+  title: string;
+  description: string;
+  assigned_to: string[]; // Array of usernames of assigned employees
+  assigned_by?: string; // Username of the admin who created the task
+  status: "pending" | "in_progress" | "completed" | "canceled";
+  priority: "low" | "medium" | "high" | "urgent";
+  start_date?: string; // Stored as YYYY-MM-DD
+  end_date?: string; // Stored as YYYY-MM-DD
+  completed_at?: string; // Timestamp when completed
+  created_at?: string; // Timestamp when created
+  updated_at?: string; // Timestamp when last updated
+  location?: string; // Field, barn, storage, etc.
+  category?: string; // Planting, harvesting, maintenance, etc.
+  notes?: string;
+}
+

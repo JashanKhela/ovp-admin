@@ -152,3 +152,8 @@
   border: none;
 
 }
+@media (max-width: 758px) {
+  #root > div > main > div > div:nth-child(4) > div:nth-child(2) > div > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
+  flex-direction: column;
+}
+}

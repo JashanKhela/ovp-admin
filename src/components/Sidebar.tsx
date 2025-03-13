@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom"; // 🟢 Import `useLocation`
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Menu, X, LayoutDashboard, Archive, LogOutIcon, Timer, CircleDollarSign, Apple, User, Locate } from "lucide-react";
+import { Menu, X, LayoutDashboard, Archive, LogOutIcon, Timer, CircleDollarSign, Apple, User, Locate, Hammer, Calendar } from "lucide-react";
 import Logo from "@/assets/logo.png";
 import { Button } from "./ui/button";
 import { getCurrentUser, logout } from "@/services/auth";
@@ -51,6 +51,26 @@ export default function Sidebar() {
                 onClick={() => setIsOpen(false)} 
               >
                 <LayoutDashboard /> Dashboard
+              </Link>
+              <Link
+                to="/dashboard/task-schedule"
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
+                  location.pathname === "/dashboard/task-schedule" ? "bg-gray-300" : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <Calendar /> Task Schedule
+              </Link>
+              <Link
+                to="/dashboard/task-manager"
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition",
+                  location.pathname === "/dashboard/task-manager" ? "bg-gray-300" : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <Hammer /> Manage Tasks
               </Link>
               <Link
                 to="/dashboard/harvest-reports"

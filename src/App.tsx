@@ -12,6 +12,8 @@ import ExpenseDetail from "./pages/admin/ExpenseDetail";
 import HarvestReports from "./pages/admin/HarvestReports";
 import AdminUsers from "./pages/admin/Users";
 import Locations from "./pages/admin/Locations";
+import TaskManager from "./pages/admin/TaskManager";
+import TaskSchedule from "./pages/admin/TaskSchedule";
 
 function App() {
   return (
@@ -29,6 +31,22 @@ function App() {
         }
       >
         <Route index element={<Dashboard />} />
+        <Route
+          path="task-schedule"
+          element={
+            <AuthGuard allowedRoles={["admin"]}>
+              <TaskSchedule />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="task-manager"
+          element={
+            <AuthGuard allowedRoles={["admin"]}>
+              <TaskManager />
+            </AuthGuard>
+          }
+        />
         <Route
           path="documents"
           element={
