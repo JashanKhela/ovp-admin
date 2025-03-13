@@ -9,8 +9,11 @@ import path from "path"
 export default defineConfig({
   build: {
     rollupOptions: {
-      external: ['@fullcalendar/core'], // Ensure this module is externalized
+      external: [], // Ensure this module is externalized
     },
+  },
+  optimizeDeps: {
+    include: ['@fullcalendar/react', '@fullcalendar/core', '@fullcalendar/daygrid', '@fullcalendar/interaction'],
   },
   plugins: [react(), tailwindcss()],
   resolve: {
