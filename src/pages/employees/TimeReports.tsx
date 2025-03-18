@@ -103,15 +103,15 @@ export default function TimeReports() {
         </CardHeader>
         <CardContent>
           {/* Date Filter */}
-          <div className="mb-4">
-            <Input
+          <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700">Filtrar por fecha</label>
+          <Input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               placeholder="Filtrar por fecha"
             />
-          </div>
-
+        </div>
           {/* Timesheet Table */}
           <div className="overflow-x-auto">
             <Table className="w-full">
@@ -244,7 +244,6 @@ export default function TimeReports() {
 
         {/* Location */}
         <div className="flex flex-col">
-        <div className="flex flex-col">
               <label
                 htmlFor="lunch_break"
                 className="text-sm font-medium text-gray-700"
@@ -265,7 +264,6 @@ export default function TimeReports() {
                 placeholder="Ingrese minutos de almuerzo"
               />
             </div>
-        </div>
       </div>
     )}
     <DialogFooter>
