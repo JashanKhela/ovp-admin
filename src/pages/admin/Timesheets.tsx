@@ -61,6 +61,7 @@ export default function Timesheets() {
     date_tracked: "",
     start_time: "",
     end_time: "",
+    lunch_break_minutes: 0,
     hours_worked: 0,
     location: "",
   });
@@ -113,55 +114,37 @@ export default function Timesheets() {
   }, [searchTerm, selectedLocation, dateRange]);
 
   
-  //  Handle Adding a New Timesheet Entry
   const handleAddTimesheet = async () => {
-    if (
-      !newEntry.username ||
-      !newEntry.date_tracked ||
-      !newEntry.start_time ||
-      !newEntry.end_time ||
-      !newEntry.location
-    ) {
-      alert("Please fill in all fields.");
+
+    if (!newEntry.start_time || !newEntry.end_time || !newEntry.username) {
+      toast.error("Please fill in all required fields.");
       return;
     }
-
-    // Convert start_time and end_time to Date objects
-    const startTime = new Date(
-      `${newEntry.date_tracked}T${newEntry.start_time}`
-    );
+  
+    const startTime = new Date(`${newEntry.date_tracked}T${newEntry.start_time}`);
     const endTime = new Date(`${newEntry.date_tracked}T${newEntry.end_time}`);
-
-    // Ensure end time is after start time
+    const lunchMinutes = newEntry.lunch_break_minutes || 0;
+  
     if (endTime <= startTime) {
-      alert("End time must be after start time.");
+      toast.error("End time must be after start time.");
       return;
     }
-
-    // Calculate hours worked (convert milliseconds to hours)
-    const hoursWorked =
-      (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-
+  
+    const totalHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    const adjustedHours = totalHours - lunchMinutes / 60;
+  
     const success = await addTimesheet({
       ...newEntry,
-      hours_worked: parseFloat(hoursWorked.toFixed(2)), // Store rounded value
+      hours_worked: Math.max(0, parseFloat(adjustedHours.toFixed(2))), // Prevent negative values
     });
-
+  
     if (success) {
       setTimesheets(await getTimesheets());
-      setNewEntry({
-        username: "",
-        first_name: "",
-        last_name: "",
-        date_tracked: "",
-        start_time: "",
-        end_time: "",
-        hours_worked: 0,
-        location: "",
-      });
+      toast.success("Timesheet entry added successfully!");
+      setNewEntry({ ...newEntry, lunch_break_minutes: 30 });
     }
-    toast.success("Timesheet entry added successfully!");
   };
+  
 
   const handleUpdateStatus = async (
     id: string,
@@ -190,7 +173,6 @@ export default function Timesheets() {
     }
   };
 
-  // Handle Deleting a Timesheet Entry
   const handleDeleteTimesheet = async () => {
     if (!deleteId) return;
     const success = await deleteTimesheet(deleteId);
@@ -201,7 +183,6 @@ export default function Timesheets() {
     setDeleteId(null);
   };
 
-  // Export Timesheets to CSV
 
   const handleExportCSV = () => {
     if (filteredEntries.length === 0) {
@@ -209,19 +190,24 @@ export default function Timesheets() {
       return;
     }
   
-    // CSV Headers for Detailed Entries
+    // Sort entries to group workers together
+    const sortedEntries = [...filteredEntries].sort((a, b) =>
+      a.last_name.localeCompare(b.last_name) || a.first_name.localeCompare(b.first_name)
+    );
+  
+    // CSV Headers for Detailed Entries (Includes Lunch Break)
     const headers = [
-      "First Name,Last Name,Date,Start Time,End Time,Hours Worked,Location,Approved By,Status",
+      "First Name,Last Name,Date,Start Time,End Time,Lunch Break (Minutes),Hours Worked,Location,Approved By,Status",
     ];
   
     // Generate CSV Data for Detailed Entries
-    const detailedCsvData = filteredEntries.map(entry =>
-      `${entry.first_name},${entry.last_name},${entry.date_tracked},${entry.start_time},${entry.end_time},${entry.hours_worked},${entry.location},${entry.approved_by || "N/A"},${entry.approval_status}`
+    const detailedCsvData = sortedEntries.map(entry =>
+      `${entry.first_name},${entry.last_name},${entry.date_tracked},${entry.start_time || "--"},${entry.end_time || "--"},${entry.lunch_break_minutes} minutes,${entry.hours_worked},${entry.location},${entry.approved_by || "N/A"},${entry.approval_status}`
     );
   
     // Generate Summary Data (Total Hours per Employee)
     const summaryMap = new Map();
-    filteredEntries.forEach(entry => {
+    sortedEntries.forEach(entry => {
       const key = `${entry.first_name} ${entry.last_name}`;
       summaryMap.set(key, (summaryMap.get(key) || 0) + entry.hours_worked);
     });
@@ -276,6 +262,7 @@ export default function Timesheets() {
                 ))}
               </SelectContent>
             </Select>
+            
             <Input
               type="text"
               value={newEntry.first_name}
@@ -317,7 +304,7 @@ export default function Timesheets() {
                 type="time"
                 id="start_time"
                 name="start_time"
-                value={newEntry.start_time}
+                value={newEntry.start_time || ""}
                 onChange={(e) =>
                   setNewEntry({ ...newEntry, start_time: e.target.value })
                 }
@@ -335,13 +322,39 @@ export default function Timesheets() {
                 type="time"
                 id="end_time"
                 name="end_time"
-                value={newEntry.end_time}
+                value={newEntry.end_time || ""}
                 onChange={(e) =>
                   setNewEntry({ ...newEntry, end_time: e.target.value })
                 }
               />
             </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="lunch_break_minutes"
+                className="text-sm font-medium text-gray-700"
+              >
+                Lunch Break (Minutes)
+              </label>
+              <Input
+                type="number"
+                id="lunch_break_minutes"
+                value={newEntry.lunch_break_minutes || ""}
+                onChange={(e) =>
+                  setNewEntry({
+                    ...newEntry,
+                    lunch_break_minutes: Number(e.target.value),
+                  })
+                }
+                placeholder="Enter minutes"
+              />
+            </div>
             <div className="w-full">
+            <label
+                htmlFor="location"
+                className="text-sm font-medium text-gray-700"
+              >
+                Location
+              </label>
               <Select
                 name="location"
                 value={newEntry.location}
@@ -353,7 +366,7 @@ export default function Timesheets() {
                   <SelectValue placeholder="Select Location" />
                 </SelectTrigger>
                 <SelectContent>
-                {locations.map((farm) => (
+                  {locations.map((farm) => (
                     <SelectItem key={farm.id} value={farm.location_name}>
                       {farm.location_name}
                     </SelectItem>
@@ -362,7 +375,7 @@ export default function Timesheets() {
               </Select>
             </div>
 
-            <Button onClick={handleAddTimesheet}>Add Entry</Button>
+            <Button className="mt-6" onClick={handleAddTimesheet}>Add Entry</Button>
           </div>
         </CardContent>
       </Card>
@@ -373,7 +386,7 @@ export default function Timesheets() {
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="flex flex-col">
               <label
                 className="text-sm font-medium text-gray-700"
@@ -407,7 +420,10 @@ export default function Timesheets() {
                 <SelectContent>
                   <SelectItem value="all">All Locations</SelectItem>
                   {locations.map((farm) => (
-                    <SelectItem key={farm.location_name} value={farm.location_name}>
+                    <SelectItem
+                      key={farm.location_name}
+                      value={farm.location_name}
+                    >
                       {farm.location_name}
                     </SelectItem>
                   ))}
@@ -448,23 +464,22 @@ export default function Timesheets() {
                   }
                 />
               </div>
-  
             </div>
             <div className="flex flex-col just">
-                <label
-                  className="text-sm font-medium text-gray-700"
-                  htmlFor="export_button"
-                >
-                  Export For Payroll
-                </label>
-                <Button onClick={handleExportCSV} className="mb-4 ">
-                  Export CSV
-                </Button>
-              </div>
+              <label
+                className="text-sm font-medium text-gray-700"
+                htmlFor="export_button"
+              >
+                Export For Payroll
+              </label>
+              <Button onClick={handleExportCSV} className="mb-4 ">
+                Export CSV
+              </Button>
+            </div>
           </div>
 
           {/* Timesheet Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-scroll">
             <Table className="w-full">
               <TableHeader>
                 <TableRow>
@@ -473,7 +488,8 @@ export default function Timesheets() {
                   <TableHead>Date</TableHead>
                   <TableHead>Start Time</TableHead>
                   <TableHead>End Time</TableHead>
-                  <TableHead>Hours</TableHead>
+                  <TableHead>Lunch Break (min)</TableHead>
+                  <TableHead>Hours Worked</TableHead>
                   <TableHead>Location</TableHead>
                   <TableHead>Approved By</TableHead>
                   <TableHead>Status</TableHead>
@@ -489,12 +505,12 @@ export default function Timesheets() {
                       <TableCell>{entry.last_name}</TableCell>
                       <TableCell>{entry.date_tracked}</TableCell>
                       <TableCell>
-                        {formatTimeTo12Hour(entry.start_time)}
+                        {formatTimeTo12Hour(entry.start_time ?? "")}
                       </TableCell>
                       <TableCell>
-                        {formatTimeTo12Hour(entry.end_time)}
+                        {formatTimeTo12Hour(entry.end_time ?? "")}
                       </TableCell>
-
+                      <TableCell>{entry.lunch_break_minutes || "0"} min</TableCell>
                       <TableCell>{entry.hours_worked}</TableCell>
                       <TableCell>{entry.location}</TableCell>
                       <TableCell>{entry.approved_by}</TableCell>

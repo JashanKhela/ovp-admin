@@ -157,9 +157,9 @@ export default function Dashboard() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Empleado</TableHead>
-                        <TableHead>Fecha</TableHead>
-                        <TableHead>Horas</TableHead>
+                        <TableHead>Employee Name</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Hours</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>

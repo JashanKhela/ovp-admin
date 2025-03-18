@@ -13,10 +13,11 @@ export interface TimesheetEntry {
   first_name: string;
   last_name: string;
   username: string;
-  date_tracked: string;
-  start_time: string; // 🟢 New field
-  end_time: string; // 🟢 New field
+  date_tracked: string ;
+  start_time: string | null; 
+  end_time: string | null; 
   hours_worked: number;
+  lunch_break_minutes?: number;
   location: string;
   approval_status?: "Pending" | "Approved" | "Rejected";
   approved_by?: string | null;

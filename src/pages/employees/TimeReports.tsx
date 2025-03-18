@@ -127,6 +127,7 @@ export default function TimeReports() {
                   <TableHead>Fecha</TableHead>
                   <TableHead>Hora de Inicio</TableHead>
                   <TableHead>Hora de Fin</TableHead>
+                  <TableHead>Minutos de Almuerzo</TableHead>
                   <TableHead>Horas Trabajadas</TableHead>
                   <TableHead>Estado</TableHead>
                 </TableRow>
@@ -137,11 +138,12 @@ export default function TimeReports() {
                     <TableRow key={entry.id}>
                       <TableCell>{entry.date_tracked}</TableCell>
                       <TableCell>
-                        {formatTimeTo12Hour(entry.start_time)}
+                        {formatTimeTo12Hour(entry.start_time ?? "")}
                       </TableCell>
                       <TableCell>
-                        {formatTimeTo12Hour(entry.end_time)}
+                        {formatTimeTo12Hour(entry.end_time ?? "")}
                       </TableCell>
+                      <TableCell>{entry.lunch_break_minutes}</TableCell>
                       <TableCell>{entry.hours_worked}</TableCell>
                       <TableCell className="flex items-center gap-2">
                         <span
@@ -232,7 +234,7 @@ export default function TimeReports() {
           <label className="text-sm font-medium text-gray-700">Hora de inicio</label>
           <Input
             type="time"
-            value={editEntry.start_time}
+            value={editEntry.start_time ?? ""}
             onChange={(e) => setEditEntry({ ...editEntry, start_time: e.target.value })}
           />
         </div>
@@ -242,7 +244,7 @@ export default function TimeReports() {
           <label className="text-sm font-medium text-gray-700">Hora de fin</label>
           <Input
             type="time"
-            value={editEntry.end_time}
+            value={editEntry.end_time ?? ""}
             onChange={(e) => setEditEntry({ ...editEntry, end_time: e.target.value })}
           />
         </div>
