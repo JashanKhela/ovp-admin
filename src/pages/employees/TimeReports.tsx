@@ -27,13 +27,6 @@ import {
     DialogHeader,
     DialogTitle,
   } from "@/components/ui/dialog";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
 import { toast } from "sonner";
 
 export default function TimeReports() {
@@ -251,21 +244,27 @@ export default function TimeReports() {
 
         {/* Location */}
         <div className="flex flex-col">
-          <label className="text-sm font-medium text-gray-700">Ubicación</label>
-          <Select
-            value={editEntry.location}
-            onValueChange={(value) => setEditEntry({ ...editEntry, location: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar ubicación" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Road 2">Road 2</SelectItem>
-              <SelectItem value="Road 3">Road 3</SelectItem>
-              <SelectItem value="Road 16">Road 16</SelectItem>
-              <SelectItem value="Spiers Rd">Spiers Rd</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex flex-col">
+              <label
+                htmlFor="lunch_break"
+                className="text-sm font-medium text-gray-700"
+              >
+                Minutos de Almuerzo
+              </label>
+              <Input
+                type="number"
+                id="lunch_break"
+                name="lunch_break_minutes"
+                value={editEntry.lunch_break_minutes || ""}
+                onChange={(e) =>
+                  setEditEntry({
+                    ...editEntry,
+                    lunch_break_minutes: Number(e.target.value),
+                  })
+                }
+                placeholder="Ingrese minutos de almuerzo"
+              />
+            </div>
         </div>
       </div>
     )}
