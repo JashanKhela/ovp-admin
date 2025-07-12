@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 import { useEffect, useState } from "react";
 import {
   getHarvestReports,
@@ -41,6 +42,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { getLocations } from "@/services/locations";
+import ReportsBreakdown from "@/components/custom/ReportsBreakdown";
+import { BIN_WEIGHT_LB } from "@/lib/utils";
 
 export default function HarvestReports() {
   const [reports, setReports] = useState<HarvestReport[]>([]);
@@ -62,6 +65,7 @@ export default function HarvestReports() {
   const [locations, setLocations] = useState<SiteLocation[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  const [selectedYear, setSelectedYear] = useState("all");
 
   const filteredReports = reports
     .filter((report) =>
@@ -76,10 +80,16 @@ export default function HarvestReports() {
       const reportDate = new Date(report.harvest_date);
       const startDate = dateRange.start ? new Date(dateRange.start) : null;
       const endDate = dateRange.end ? new Date(dateRange.end) : null;
-      return (
+
+      const matchesDateRange =
         (!startDate || reportDate >= startDate) &&
-        (!endDate || reportDate <= endDate)
-      );
+        (!endDate || reportDate <= endDate);
+
+      const matchesYear =
+        selectedYear === "all" ||
+        reportDate.getFullYear().toString() === selectedYear;
+
+      return matchesDateRange && matchesYear;
     });
 
   const totalPages = Math.ceil(filteredReports.length / pageSize);
@@ -361,6 +371,30 @@ export default function HarvestReports() {
                 </Select>
               </div>
 
+              {/* Year Filter */}
+              <div className="flex flex-col">
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="year-filter"
+                >
+                  Filter by Year
+                </label>
+                <Select value={selectedYear} onValueChange={setSelectedYear}>
+                  <SelectTrigger id="year-filter" className="w-full">
+                    <SelectValue placeholder="Select Year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Years</SelectItem>
+                    <SelectItem value="2025">2025</SelectItem>
+
+                    <SelectItem value="2024">2024</SelectItem>
+                    <SelectItem value="2023">2023</SelectItem>
+                    <SelectItem value="2022">2022</SelectItem>
+                    {/* Add more as needed */}
+                  </SelectContent>
+                </Select>
+              </div>
+              
               {/* Date Range Filter */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col">
@@ -396,6 +430,7 @@ export default function HarvestReports() {
                   />
                 </div>
               </div>
+
             </div>
 
             <Table className="w-full">
@@ -405,6 +440,7 @@ export default function HarvestReports() {
                   <TableHead>Variety</TableHead>
                   <TableHead>Bins</TableHead>
                   <TableHead>Pounds</TableHead>
+                  <TableHead>Net Pounds</TableHead>
                   <TableHead>Location</TableHead>
                   <TableHead>Harvest Date</TableHead>
                   <TableHead>Shipped To</TableHead>
@@ -420,6 +456,10 @@ export default function HarvestReports() {
                       <TableCell>{report.variety}</TableCell>
                       <TableCell>{report.bins_harvested}</TableCell>
                       <TableCell>{report.pounds_harvested}</TableCell>
+                      <TableCell>
+                        {report.pounds_harvested -
+                          report.bins_harvested * BIN_WEIGHT_LB}
+                      </TableCell>
                       <TableCell>{report.harvest_location}</TableCell>
                       <TableCell>{report.harvest_date}</TableCell>
                       <TableCell>{report.shipped_to || "N/A"}</TableCell>
@@ -429,7 +469,7 @@ export default function HarvestReports() {
                           variant="destructive"
                           onClick={() => setDeleteId(report.id!)}
                         >
-                          🗑 Delete
+                          Delete
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -471,6 +511,15 @@ export default function HarvestReports() {
               </Pagination>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Reports Breakdown</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ReportsBreakdown reports={reports} />
         </CardContent>
       </Card>
 

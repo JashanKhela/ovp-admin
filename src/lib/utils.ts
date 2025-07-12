@@ -127,3 +127,5 @@ export const FRUITS = {
   Peaches: ["Redhaven"],
   Plums: ["Japanese Plum"],
 };
+
+export const BIN_WEIGHT_LB = 50;
